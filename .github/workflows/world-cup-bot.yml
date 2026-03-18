@@ -1,0 +1,37 @@
+name: World Cup AI News Bot (Daily Report)
+
+on:
+  schedule:
+    # 這裡使用 Cron 語法。目前的設定為：每天的 UTC 00:00 (台灣早上 08:00) 執行一次
+    # 如果想改成每 4 小時執行一次，可設定為: - cron: '0 */4 * * *'
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允許我們在 GitHub 網頁上手動點擊「Run workflow」馬上跑一次
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 1. 取得最新程式碼 (Checkout repository)
+      uses: actions/checkout@v4
+      
+    - name: 2. 建立 Python 環境 (Set up Python)
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: 3. 安裝執行套件 (Install dependencies)
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: 4. 啟動 AI 情報發送程式 (Run Main Script)
+      env:
+        # 從 GitHub Secrets 中安全地讀取私密金鑰，絕對不會外洩！
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        # 告訴 main.py 目前人在雲端，跑完一次就收工，不要無限迴圈！
+        GITHUB_ACTIONS: "true"
+      run: |
+        python main.py

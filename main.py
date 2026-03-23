@@ -2,6 +2,7 @@ import time
 import schedule
 import os
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
 from src.scraper import fetch_latest_news
 from src.analyzer import analyze_news
 from src.notifier import push_report

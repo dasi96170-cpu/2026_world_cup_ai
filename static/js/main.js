@@ -3,12 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const reportContentEl = document.getElementById('report-content');
     const timestampEl = document.getElementById('timestamp');
 
-    // 設定 marked.js 的選項，確保安全與換行處理
-    marked.setOptions({
-        breaks: true,
-        gfm: true
-    });
-
     // 初次載入即自動抓取報紙
     fetchDailyReport();
 

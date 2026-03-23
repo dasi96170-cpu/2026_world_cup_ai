@@ -10,43 +10,47 @@ document.addEventListener('DOMContentLoaded', () => {
         gfm: true
     });
 
-    analyzeBtn.addEventListener('click', async () => {
-        // UI 狀態切換：防呆、顯示載入中
+    // 初次載入即自動抓取報紙
+    fetchDailyReport();
+
+    // 讓按鈕也能重新整理
+    analyzeBtn.addEventListener('click', fetchDailyReport);
+
+    async function fetchDailyReport() {
         analyzeBtn.disabled = true;
-        analyzeBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
+        analyzeBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 正在載入日報...';
         loadingEl.classList.remove('hidden');
         
-        // 若為第一次點擊，清除空狀態
         if(reportContentEl.querySelector('.empty-state')) {
-            reportContentEl.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 2rem;">正在透過 API 擷取全球新聞數據，並進行 LLM 模型推論階段...</p>';
+            reportContentEl.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 2rem;">正在加載最新的 GitHub 自動編譯快照...</p>';
         }
 
         try {
-            // 向後端 Flask 發送 API 請求
-            const response = await fetch('/api/analyze');
-            const data = await response.json();
-
-            if (data.status === 'success') {
+            // 直接抓取由 GitHub Actions 每天在根目錄產生的 .md 檔案
+            // 由於是靜態網站，加上時間戳避免快取
+            const response = await fetch(`./latest_report.md?t=${new Date().getTime()}`);
+            
+            if (response.ok) {
+                const markdownText = await response.text();
                 // 成功取得報告，使用 markdown 渲染
-                reportContentEl.innerHTML = marked.parse(data.report);
+                reportContentEl.innerHTML = marked.parse(markdownText);
                 
                 // 更新時間戳記
                 const now = new Date();
-                timestampEl.textContent = `最新更新：${now.toLocaleTimeString()}`;
+                timestampEl.textContent = `快取更新時間：${now.toLocaleTimeString()}`;
                 timestampEl.classList.remove('hidden');
             } else {
-                // 回報錯誤
-                reportContentEl.innerHTML = `<div style="color: var(--accent);"><i class="fa-solid fa-triangle-exclamation"></i> 錯誤：${data.message}</div>`;
+                // 如果找不到檔案（可能剛建立 GitHub Pages 還沒跑完）
+                reportContentEl.innerHTML = `<div style="color: var(--accent);"><i class="fa-solid fa-triangle-exclamation"></i> 錯誤：尚未找到今日的新聞編譯檔，請確認 GitHub Actions 是否執行成功。</div>`;
             }
 
         } catch (error) {
-            console.error('API 請求失敗:', error);
-            reportContentEl.innerHTML = `<div style="color: var(--accent);"><i class="fa-solid fa-triangle-exclamation"></i> 無法連接分析伺服器，請確認伺服器與網路狀態。</div>`;
+            console.error('抓取失敗:', error);
+            reportContentEl.innerHTML = `<div style="color: var(--accent);"><i class="fa-solid fa-triangle-exclamation"></i> 無法取得快照，請確認網路連線。</div>`;
         } finally {
-            // UI 狀態復原
             analyzeBtn.disabled = false;
-            analyzeBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> 啟動即時分析';
+            analyzeBtn.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> 重新載入日報';
             loadingEl.classList.add('hidden');
         }
-    });
+    }
 });

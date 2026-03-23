@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 世界盃 AI 智能情報樞紐</title>
+    <!-- 引入 Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./static/css/style.css">
+    <!-- 引入 Font Awesome 作為 Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="glass-panel">
+            <div class="logo-container">
+                <i class="fa-solid fa-futbol"></i>
+                <h1>World Cup 2026 AI Intel</h1>
+            </div>
+            <p class="subtitle">美加墨世界盃・即時戰況與大數據情緒觀測站</p>
+        </header>
+
+        <main>
+            <section class="dashboard">
+                <div class="control-panel glass-panel">
+                    <h2><i class="fa-solid fa-microchip"></i> AI 情報分析引擎</h2>
+                    <p>點擊按鈕，即時抓取全球體育新聞網（如 ESPN, BBC）並交由 Gemini AI 進行戰況與情緒總結。</p>
+                    <button id="analyze-btn" class="glow-on-hover">
+                        <i class="fa-solid fa-clock-rotate-left"></i> 載入最新 AI 日報
+                    </button>
+                    <div id="loading" class="hidden">
+                        <div class="spinner"></div>
+                        <span>AI 正在大量閱讀並解析全球新聞中，請稍候...</span>
+                    </div>
+                </div>
+
+                <div class="report-panel glass-panel">
+                    <div class="report-header">
+                        <h2><i class="fa-solid fa-file-invoice"></i> 最新情報洞察報告</h2>
+                        <span id="timestamp" class="badge hidden"></span>
+                    </div>
+                    <div id="report-content" class="report-content markdown-body">
+                        <!-- AI 報告將渲染於此 -->
+                        <div class="empty-state">
+                            <i class="fa-regular fa-compass"></i>
+                            <p>平台準備就緒，等待您的指令以開始分析。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2026 World Cup AI Intelligence Platform. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- 引入 marked.js 用於渲染 Markdown 格式 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="./static/js/main.js"></script>
+</body>
+</html>

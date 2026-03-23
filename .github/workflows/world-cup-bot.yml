@@ -2,10 +2,15 @@ name: World Cup AI News Bot (Daily Report)
 
 on:
   schedule:
-    # 這裡使用 Cron 語法。目前的設定為：每天的 UTC 00:00 (台灣早上 08:00) 執行一次
-    # 如果想改成每 4 小時執行一次，可設定為: - cron: '0 */4 * * *'
+    # 每天的 UTC 00:00 (台灣早上 08:00) 執行一次
     - cron: '0 0 * * *'
-  workflow_dispatch: # 允許我們在 GitHub 網頁上手動點擊「Run workflow」馬上跑一次
+  # 允許我們在 GitHub 網頁上手動觸發
+  workflow_dispatch: 
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   run-bot:
@@ -25,16 +30,30 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
-    - name: 4. 啟動 AI 情報發送程式 (Run Main Script)
+    - name: 4. 啟動 AI 情報掃描並產生網頁 (Run Main Script)
       env:
-        # 從 GitHub Secrets 中安全地讀取私密金鑰，絕對不會外洩！
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
         LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
-        # 告訴 main.py 目前人在雲端，跑完一次就收工，不要無限迴圈！
         GITHUB_ACTIONS: "true"
       run: |
         python main.py
+
+    - name: 5. 封裝靜態網頁檔案 (Upload Pages Artifact)
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+
+  deploy-pages:
+    needs: run-bot
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 6. 發布至全世界 (Deploy to GitHub Pages)
+        id: deployment
+        uses: actions/deploy-pages@v4

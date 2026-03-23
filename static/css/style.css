@@ -331,6 +331,20 @@ header {
     font-weight: 600;
 }
 
+.markdown-body a {
+    color: var(--glow-primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-bottom: 1px dotted var(--glow-primary);
+    word-break: break-all;
+}
+
+.markdown-body a:hover {
+    color: #fff;
+    border-bottom-style: solid;
+    text-shadow: 0 0 8px var(--glow-primary);
+}
+
 /* Animations */
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-30px); }

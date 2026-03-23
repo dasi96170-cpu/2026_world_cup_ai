@@ -32,6 +32,8 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+        LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
         # 告訴 main.py 目前人在雲端，跑完一次就收工，不要無限迴圈！
         GITHUB_ACTIONS: "true"
       run: |
